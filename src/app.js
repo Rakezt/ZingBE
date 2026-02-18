@@ -47,10 +47,20 @@ app.delete('/user', userAuth, async (req, res) => {
     res.status(400).send('User delete failed');
   }
 });
-app.patch('/user', userAuth, async (req, res) => {
-  const userId = req.body.userId;
+app.patch('/user/userId', userAuth, async (req, res) => {
+  const userId = req.params?.userId;
   const data = req.body;
   try {
+    const allowedUpdate = ['age', 'photoUrl', 'about', 'interest'];
+    const isAllowedUpdate = Object.keys(data).every((k) =>
+      allowedUpdate.includes(k),
+    );
+    if (!isAllowedUpdate) {
+      throw new Error('Selected field cannot be update');
+    }
+    if (data?.interest.length > 0) {
+      throw new Error("Interest can't exceed more than 10");
+    }
     const users = await user.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: 'after',
       runValidators: true,
