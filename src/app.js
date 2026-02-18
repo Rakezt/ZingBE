@@ -51,7 +51,10 @@ app.patch('/user', userAuth, async (req, res) => {
   const userId = req.body.userId;
   const data = req.body;
   try {
-    const users = await user.findByIdAndUpdate({ _id: userId }, data);
+    const users = await user.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: 'after',
+      runValidators: true,
+    });
     res.send(users);
   } catch (error) {
     res.status(400).send('User not updated');
