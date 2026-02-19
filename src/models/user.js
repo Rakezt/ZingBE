@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema(
       unique: true,
       trim: true,
       validate(value) {
-        console.log(value);
+        // console.log(value);
         if (!validator.isEmail(value)) {
           throw new Error('Invalid email address ' + value);
         }
@@ -54,7 +54,7 @@ const userSchema = mongoose.Schema(
     },
     interest: { type: [String] },
   },
-  { timestamp: true },
+  { timestamps: true },
 );
 userSchema.methods.getJWT = async function () {
   const user = this;

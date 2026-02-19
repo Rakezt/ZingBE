@@ -3,6 +3,7 @@ const authRouter = express.Router();
 const { validationSignUpData } = require('../utils/validation');
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const { now } = require('mongoose');
 
 authRouter.post('/signup', async (req, res) => {
   try {
@@ -44,6 +45,10 @@ authRouter.post('/login', async (req, res) => {
   } catch (error) {
     res.status(400).send('Login failed ' + error);
   }
+});
+authRouter.post('/logout', async (req, res) => {
+  res.cookie('token', null, { expires: new Date(0) });
+  res.status(200).send('Log out Successful');
 });
 
 module.exports = authRouter;
