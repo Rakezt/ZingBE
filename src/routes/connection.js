@@ -1,7 +1,7 @@
 const express = require('express');
 const connectionRouter = express.Router();
 const { userAuth } = require('../middlewares/auth');
-const connection = require('../models/connection');
+const Connection = require('../models/connection');
 const User = require('../models/user');
 
 connectionRouter.post(
@@ -21,7 +21,7 @@ connectionRouter.post(
       if (!toUser) {
         throw new Error('User you have selected is not found');
       }
-      const checkConnection = await connection.findOne({
+      const checkConnection = await Connection.findOne({
         $or: [
           { fromUserId, toUserId },
           { fromUserId: toUserId, toUserId: fromUserId },
@@ -30,7 +30,7 @@ connectionRouter.post(
       if (checkConnection) {
         throw new Error('Connection already exist');
       }
-      const connectionRequest = new connection({
+      const connectionRequest = new Connection({
         fromUserId,
         toUserId,
         status,
@@ -55,7 +55,7 @@ connectionRouter.post(
       if (!allowedStatus.includes(status)) {
         throw new Error('Invalid Status Selected');
       }
-      const checkConnection = await connection.findOne({
+      const checkConnection = await Connection.findOne({
         _id: connectionId,
         toUserId: loggedUser,
         status: 'interested',
@@ -65,7 +65,7 @@ connectionRouter.post(
       }
       checkConnection.status = status;
       const data = await checkConnection.save();
-      res.send({ message: `Connection has been ${status}`, data });
+      res.send({ message: `${loggedUser.firstName} has ${status} `, data });
     } catch (error) {
       res.status(400).send('ERROR :' + error.message);
     }
