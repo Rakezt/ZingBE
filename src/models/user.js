@@ -3,7 +3,7 @@ const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-const userSchema = mongoose.Schema(
+const UserSchema = new mongoose.Schema(
   {
     firstName: { type: String, required: true, minLength: 4 },
     lastName: { type: String, required: true, minLength: 4 },
@@ -56,14 +56,14 @@ const userSchema = mongoose.Schema(
   },
   { timestamps: true },
 );
-userSchema.methods.getJWT = async function () {
+UserSchema.methods.getJWT = async function () {
   const user = this;
   const token = await jwt.sign({ _id: user._id }, 'manchester@1992', {
     expiresIn: '7d',
   });
   return token;
 };
-userSchema.methods.validatePassword = async function (passwordInputByUser) {
+UserSchema.methods.validatePassword = async function (passwordInputByUser) {
   const user = this;
   const passwordHash = user.password;
   const isValidPassword = await bcrypt.compare(
@@ -74,4 +74,4 @@ userSchema.methods.validatePassword = async function (passwordInputByUser) {
   return isValidPassword;
 };
 
-module.exports = mongoose.model('zingUsers', userSchema);
+module.exports = mongoose.model('zingUsers', UserSchema);

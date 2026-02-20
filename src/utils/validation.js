@@ -35,11 +35,22 @@ const validateEditProfileData = (req) => {
   if (lastName && !validator.isLength(lastName, { min: 2 })) {
     throw new Error('Last Name is too short');
   }
+  if (gender && !['male', 'female', 'others'].includes(gender)) {
+    throw new Error('Gender must be male, female or others');
+  }
   if (photoUrl && !validator.isURL(photoUrl)) {
     throw new Error('Images URL is invalid');
   }
   if (about && !validator.isLength(about, { max: 200 })) {
     throw new Error("About me can't exceed 200 words");
+  }
+  if (
+    interest &&
+    (!Array.isArray(interest) ||
+      interest.length > 10 ||
+      interest.some((i) => typeof i !== 'string'))
+  ) {
+    throw new Error('Interest must be an array with max 10 items');
   }
 
   return isAllowedEdits;
