@@ -36,7 +36,7 @@ connectionRouter.post(
         status,
       });
       const data = await connectionRequest.save();
-      res.send({ message: 'Connection successful', data });
+      res.json({ message: 'Connection successful', data });
     } catch (error) {
       res.status(400).send('ERROR :' + error.message);
     }
@@ -65,7 +65,7 @@ connectionRouter.post(
       }
       checkConnection.status = status;
       const data = await checkConnection.save();
-      res.send({ message: `${loggedUser.firstName} has ${status} `, data });
+      res.json({ message: `${loggedUser.firstName} has ${status} `, data });
     } catch (error) {
       res.status(400).send('ERROR :' + error.message);
     }

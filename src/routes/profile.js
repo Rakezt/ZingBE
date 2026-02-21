@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt');
 profileRouter.get('/profile/view', userAuth, async (req, res) => {
   try {
     const user = req.user;
-    res.send(user);
+    res.json({ message: 'Profile updated', data: user });
   } catch (error) {
     res.status(400).send('ERROR :' + error);
   }
@@ -45,7 +45,7 @@ profileRouter.patch('/profile/updatePassword', userAuth, async (req, res) => {
     loggedUser.password = passwordHash;
 
     await loggedUser.save();
-    res.send('Password Updated');
+    res.json({ message: 'Password Updated' });
   } catch (error) {
     res.status(400).send('ERROR :' + error);
   }
