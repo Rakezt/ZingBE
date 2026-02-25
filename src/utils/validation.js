@@ -18,6 +18,7 @@ const validateEditProfileData = (req) => {
     'photoUrl',
     'gender',
     'about',
+    'age',
     'interest',
   ];
   const dataToBeEdit = Object.keys(req.body);
@@ -27,7 +28,8 @@ const validateEditProfileData = (req) => {
   if (!isAllowedEdits) {
     throw new Error('Invalid update-field');
   }
-  const { firstName, lastName, photoUrl, gender, about, interest } = req.body;
+  const { firstName, lastName, photoUrl, gender, age, about, interest } =
+    req.body;
 
   if (firstName && !validator.isLength(firstName, { min: 2 })) {
     throw new Error('First Name is too short');
@@ -35,8 +37,11 @@ const validateEditProfileData = (req) => {
   if (lastName && !validator.isLength(lastName, { min: 2 })) {
     throw new Error('Last Name is too short');
   }
-  if (gender && !['male', 'female', 'others'].includes(gender)) {
+  if (gender && !['male', 'female', 'other'].includes(gender)) {
     throw new Error('Gender must be male, female or others');
+  }
+  if (age && (!Number.isInteger(age) || age < 18 || age > 120)) {
+    throw new Error('Age must be a valid number between 18 and 120');
   }
   if (photoUrl && !validator.isURL(photoUrl)) {
     throw new Error('Images URL is invalid');
