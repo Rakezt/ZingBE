@@ -18,8 +18,13 @@ authRouter.post('/signup', async (req, res) => {
       emailId,
       password: passwordHash,
     });
-    await user.save();
-    res.json({ message: 'User added in database', data: user });
+    const userSaveData = await user.save();
+    const token = await userSaveData.getJWT();
+    res.cookie('token', token);
+    const userResponse = userSaveData.toObject();
+    delete userResponse.password;
+
+    res.json({ message: 'User added in database', data: userResponse });
   } catch (error) {
     console.log(error);
     res.status(400).send('Error saving user :' + error.message);
@@ -40,7 +45,9 @@ authRouter.post('/login', async (req, res) => {
     const token = await user.getJWT();
 
     res.cookie('token', token);
-    res.json({ message: 'Login succesful', data: user });
+    const userResponse = user.toObject();
+    delete userResponse.password;
+    res.json({ message: 'Login succesful', data: userResponse });
   } catch (error) {
     res.status(400).send('Login failed ' + error);
   }
