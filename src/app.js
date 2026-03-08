@@ -7,7 +7,10 @@ const { authRouter } = require('./routes/auth');
 const { profileRouter } = require('./routes/profile');
 const { connectionRouter } = require('./routes/connection');
 const { userRouter } = require('./routes/user');
+const { paymentRouter } = require('./routes/payment');
 const cors = require('cors');
+const http = require('http');
+const initializeSocket = require('./utils/socket');
 
 app.use(
   cors({
@@ -22,10 +25,14 @@ app.use('/', authRouter);
 app.use('/', profileRouter);
 app.use('/', connectionRouter);
 app.use('/', userRouter);
+app.use('/', paymentRouter);
+
+const server = http.createServer(app);
+initializeSocket(server);
 
 connectDB()
   .then(() => {
-    app.listen(process.env.PORT, () => {
+    server.listen(process.env.PORT, () => {
       console.log(`Server running on port ${process.env.PORT} `);
     });
     console.log('Database connected');
