@@ -1,5 +1,6 @@
 const socket = require('socket.io');
 const crypto = require('crypto');
+const Chat = require('../models/chat');
 
 const getRoomId = (userId, targetUserId) => {
   return crypto
@@ -20,11 +21,31 @@ const initializeSocket = (server) => {
       // console.log(firstName + ' join ' + roomId);
       socket.join(roomId);
     });
-    socket.on('sendMessage', ({ firstName, userId, targetUserId, text }) => {
-      const roomId = getRoomId(userId, targetUserId);
-      // console.log(firstName + ':' + text);
-      io.to(roomId).emit('messageReceived', { firstName, text });
-    });
+    socket.on(
+      'sendMessage',
+      async ({ firstName, lastName, userId, targetUserId, text }) => {
+        try {
+          const roomId = getRoomId(userId, targetUserId);
+          // console.log(firstName + ':' + text);
+          let chat = await Chat.findOne({
+            participants: { $all: [userId, targetUserId] },
+          });
+          if (!chat) {
+            chat = await Chat({
+              participants: [userId, targetUserId],
+              messages: [],
+            });
+          }
+          chat.messages.push({ senderId: userId, text });
+          await chat.save();
+          io.to(roomId).emit('messageReceived', { firstName, lastName, text });
+        } catch (error) {
+          io.to(roomId).emit('messageError', {
+            error: 'Failed to send message',
+          });
+        }
+      },
+    );
     socket.on('disconnect', () => {});
   });
 };

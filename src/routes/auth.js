@@ -25,7 +25,6 @@ authRouter.post('/signup', async (req, res) => {
 
     res.json({ message: 'User added in database', data: userResponse });
   } catch (error) {
-    console.log(error);
     res.status(400).send('Error saving user :' + error.message);
   }
 });
