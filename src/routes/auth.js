@@ -19,7 +19,12 @@ authRouter.post('/signup', async (req, res) => {
     });
     const userSaveData = await user.save();
     const token = await userSaveData.getJWT();
-    res.cookie('token', token);
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     const userResponse = userSaveData.toObject();
     delete userResponse.password;
 
@@ -42,7 +47,12 @@ authRouter.post('/login', async (req, res) => {
     }
     const token = await user.getJWT();
 
-    res.cookie('token', token);
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     const userResponse = user.toObject();
     delete userResponse.password;
     res.json({ message: 'Login succesful', data: userResponse });
