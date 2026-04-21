@@ -10,9 +10,9 @@ const bcrypt = require('bcrypt');
 profileRouter.get('/profile/view', userAuth, async (req, res) => {
   try {
     const user = req.user;
-    res.json({ message: 'Profile updated', data: user });
+    res.status(200).json({ message: 'Profile fetch successfully', data: user });
   } catch (error) {
-    res.status(400).send('ERROR :' + error);
+    res.status(500).send('ERROR :' + error);
   }
 });
 profileRouter.patch('/profile/edit', userAuth, async (req, res) => {
@@ -23,12 +23,12 @@ profileRouter.patch('/profile/edit', userAuth, async (req, res) => {
     const loggedUser = req.user;
     Object.keys(req.body).forEach((key) => (loggedUser[key] = req.body[key]));
     await loggedUser.save();
-    res.json({
-      message: `${loggedUser.name} you profile has been updated`,
+    res.status(200).json({
+      message: `${loggedUser.name}, your profile has been updated`,
       data: loggedUser,
     });
   } catch (error) {
-    res.status(400).send('ERROR :' + error);
+    res.status(500).send('ERROR :' + error);
   }
 });
 
@@ -45,7 +45,7 @@ profileRouter.patch('/profile/updatePassword', userAuth, async (req, res) => {
     loggedUser.password = passwordHash;
 
     await loggedUser.save();
-    res.json({ message: 'Password Updated' });
+    res.status(200).json({ message: 'Password updated successfully' });
   } catch (error) {
     res.status(400).send('ERROR :' + error);
   }
