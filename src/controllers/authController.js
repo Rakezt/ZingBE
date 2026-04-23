@@ -17,7 +17,7 @@ const singUp = async (req, res) => {
       data: result.user,
     });
   } catch (error) {
-    res.status(400).send('Error saving user : ' + error.message);
+    res.status(400).send('Error creating user : ' + error.message);
   }
 };
 
@@ -31,7 +31,7 @@ const login = async (req, res) => {
       data: result.user,
     });
   } catch (error) {
-    res.status(400).send('Error failed : ' + error.message);
+    res.status(400).send('Error : ' + error.message);
   }
 };
 
