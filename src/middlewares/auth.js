@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
+const { findUserById } = require('../repositories/userRepository');
 
 const userAuth = async (req, res, next) => {
   try {
@@ -9,11 +9,11 @@ const userAuth = async (req, res, next) => {
     }
     const decodeMessage = await jwt.verify(token, process.env.JWT_SECRET);
     const { _id } = decodeMessage;
-    const user = await User.findById(_id);
+    const user = await findUserById(_id);
     req.user = user;
     next();
   } catch (error) {
-    res.status(400).send('ERROR : ' + error.message);
+    res.status(401).send('ERROR : ' + error.message);
   }
 };
 
