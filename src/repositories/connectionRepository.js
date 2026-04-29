@@ -52,7 +52,7 @@ const findAcceptedConnections = async (userId) => {
 
 const findAllUserConnection = async (userId) => {
   return await Connection.find({
-    $or: [{ froomUserId: userId }, { toUserId: userId }],
+    $or: [{ fromUserId: userId }, { toUserId: userId }],
   }).select('fromUserId toUserId');
 };
 
