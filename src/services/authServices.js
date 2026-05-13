@@ -30,11 +30,11 @@ const loginUser = async (reqbody) => {
   const { emailId, password } = reqbody;
   const user = await findUserByEmail(emailId);
   if (!user) {
-    throw new Error('Invalid Credentials');
+    throw new ApiError(401, 'Invalid Credentials');
   }
   const isPasswordValid = await user.validatePassword(password);
   if (!isPasswordValid) {
-    throw new Error('Invalid Credentials');
+    throw new ApiError(401, 'Invalid Credentials');
   }
   const token = await user.getJWT();
 

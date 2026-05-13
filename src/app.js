@@ -9,9 +9,12 @@ const { connectionRouter } = require('./routes/connection');
 const { userRouter } = require('./routes/user');
 const { paymentRouter } = require('./routes/payment');
 const cors = require('cors');
+const helmet = require('helmet');
+const apiRateLimiter = require('./middlewares/rateLimiter');
 const http = require('http');
 const initializeSocket = require('./utils/socket');
 const { chatRouter } = require('./routes/chat');
+const errorHandler = require('./middlewares/errorHandler');
 
 app.use(
   cors({
@@ -19,8 +22,10 @@ app.use(
     credentials: true,
   }),
 );
+app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
+app.use(apiRateLimiter);
 
 app.use('/', authRouter);
 app.use('/', profileRouter);
@@ -28,6 +33,8 @@ app.use('/', connectionRouter);
 app.use('/', userRouter);
 app.use('/', paymentRouter);
 app.use('/', chatRouter);
+
+app.use(errorHandler);
 
 const server = http.createServer(app);
 initializeSocket(server);

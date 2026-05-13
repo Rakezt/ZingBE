@@ -4,6 +4,7 @@ const {
   validatePasswordUpdate,
 } = require('../utils/validation');
 const bcrypt = require('bcrypt');
+const ApiError = require('../utils/ApiError');
 
 const getProfile = async (loggedUser) => {
   return loggedUser;
@@ -21,7 +22,7 @@ const updatePassword = async (loggedUser, reqBody) => {
   const { oldPassword, newPassword } = reqBody;
   const isMatch = await loggedUser.validatePassword(oldPassword);
   if (!isMatch) {
-    throw new Error('Wrong Old password enter');
+    throw new ApiError(400, 'Wrong Old password enter');
   }
   const passwordHash = await bcrypt.hash(newPassword, 10);
   loggedUser.password = passwordHash;

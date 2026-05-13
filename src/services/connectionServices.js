@@ -5,6 +5,7 @@ const {
   saveConnection,
 } = require('../repositories/connectionRepository');
 const { findUserById } = require('../repositories/userRepository');
+const ApiError = require('../utils/ApiError');
 
 const sendRequest = async (loggedUser, params) => {
   const fromUserId = loggedUser._id;
@@ -13,11 +14,11 @@ const sendRequest = async (loggedUser, params) => {
 
   const allowedStatus = ['interested', 'ignored'];
   if (!allowedStatus.includes(status))
-    throw new Error('Invalid status selected');
+    throw new ApiError(400, 'Invalid Status Selected');
   const toUser = await findUserById(toUserId);
-  if (!toUser) throw new Error('User selected is not found');
+  if (!toUser) throw new ApiError(404, 'User you have selected is not found');
   const existingConnection = await findExistingConnection(fromUserId, toUserId);
-  if (existingConnection) throw new Error('Connection already established');
+  if (existingConnection) throw new ApiError(400, 'Connection already exist');
 
   const data = await createConnection({ toUserId, fromUserId, status });
   return data;
@@ -30,9 +31,9 @@ const reviewRequest = async (loggedUser, params) => {
 
   const allowedStatus = ['accepted', 'rejected'];
   if (!allowedStatus.includes(status))
-    throw new Error('Invalid status selected');
+    throw new ApiError(400, 'Invalid Status Selected');
   const connection = await findPendingRequestById(connectionId, loggedUserId);
-  if (!connection) throw new Error("Connection doesn't exist");
+  if (!connection) throw new ApiError(404, 'Connection request is not found');
   connection.status = status;
   const data = await saveConnection(connection);
   return { data, status };

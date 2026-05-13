@@ -38,6 +38,14 @@ const findFeedUsers = async (excludeIds, loggedUserId, skip, limit) => {
     .limit(limit);
 };
 
+const upgradeUserMembership = async (userId, membershipType) => {
+  return await User.findByIdAndUpdate(
+    userId,
+    { isPremium: true, memberShipType: membershipType },
+    { new: true },
+  );
+};
+
 module.exports = {
   createUser,
   findUserByEmail,
@@ -45,4 +53,5 @@ module.exports = {
   updateUserById,
   saveUser,
   findFeedUsers,
+  upgradeUserMembership,
 };

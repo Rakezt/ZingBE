@@ -1,5 +1,7 @@
 const { signupUser, loginUser } = require('../services/authServices');
 
+const asyncHandler = require('../utils/asyncHandler');
+
 const cookieOptions = {
   httpOnly: true,
   secure: true,
@@ -7,46 +9,43 @@ const cookieOptions = {
   maxAge: 3 * 24 * 60 * 60 * 1000,
 };
 
-const singUp = async (req, res) => {
-  try {
-    const result = await signupUser(req.body);
-    res.cookie('token', result.token, cookieOptions);
-    res.status(200).json({
-      success: true,
-      message: 'User added in database',
-      data: result.user,
-    });
-  } catch (error) {
-    res.status(400).send('Error creating user : ' + error.message);
-  }
-};
+const signUp = asyncHandler(async (req, res) => {
+  const result = await signupUser(req.body);
 
-const login = async (req, res) => {
-  try {
-    const result = await loginUser(req.body);
-    res.cookie('token', result.token, cookieOptions);
-    res.status(200).json({
-      success: true,
-      message: 'Login successful',
-      data: result.user,
-    });
-  } catch (error) {
-    res.status(400).send('Error : ' + error.message);
-  }
-};
+  res.cookie('token', result.token, cookieOptions);
 
-const logout = async (req, res) => {
+  res.status(201).json({
+    success: true,
+    message: 'User added in database',
+    data: result.user,
+  });
+});
+
+const login = asyncHandler(async (req, res) => {
+  const result = await loginUser(req.body);
+
+  res.cookie('token', result.token, cookieOptions);
+
+  res.status(200).json({
+    success: true,
+    message: 'Login successful',
+    data: result.user,
+  });
+});
+
+const logout = asyncHandler(async (req, res) => {
   res.cookie('token', null, {
     expires: new Date(Date.now()),
   });
+
   res.status(200).json({
     success: true,
     message: 'Logout successful',
   });
-};
+});
 
 module.exports = {
-  singUp,
+  signUp,
   login,
   logout,
 };
